@@ -15,5 +15,13 @@
   ],
 
   "client_side": "required",
-  "server_side": "unsupported"
+  "server_side": "unsupported",
+
+  "donation_urls": [
+    {
+      "id": "paypal",
+      "platform": "PayPal",
+      "url": "https://paypal.me/DanBaggott"
+    }
+  ]
 }
