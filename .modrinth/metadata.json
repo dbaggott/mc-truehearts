@@ -19,9 +19,9 @@
 
   "donation_urls": [
     {
-      "id": "paypal",
-      "platform": "PayPal",
-      "url": "https://paypal.me/DanBaggott"
+      "id": "ko-fi",
+      "platform": "Ko-fi",
+      "url": "https://ko-fi.com/dnbg000"
     }
   ]
 }
