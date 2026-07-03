@@ -11,6 +11,20 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 > in reverse-chronological order for human browsing. When shipping a new release,
 > add the version's file in `.modrinth/changelogs/` *and* prepend a new section here.
 
+## [1.3.1] — 2026-07-03
+
+Damage-log label polish.
+
+- Damage sources with camelCase or snake_case internal names now render
+  cleanly out of the box: `WitherSkull` → **Wither skull**,
+  `DragonBreath` → **Dragon breath**, `MaceSmash` → **Mace smash**,
+  `BadRespawnPoint` → **Bad respawn point**, and any future vanilla
+  source in the same shape.
+- New explicit label for hot sulfur cube damage: **Magma sulfur cube**.
+- Fixed: the label for axolotl / fish "drying out" damage now correctly
+  renders as **Dry drowning** (was silently falling through to the
+  default because the switch case was matching the wrong id-form).
+
 ## [1.3.0] — 2026-07-01
 
 A new overlay: the last few hits you took.
@@ -98,6 +112,7 @@ First stable release.
 Minecraft 26.2 with Fabric Loader 0.19.3+. Client-only — does nothing on a dedicated
 server and isn't required there.
 
+[1.3.1]: https://github.com/dbaggott/mc-truhearts/releases/tag/v1.3.1
 [1.3.0]: https://github.com/dbaggott/mc-truhearts/releases/tag/v1.3.0
 [1.2.1]: https://github.com/dbaggott/mc-truhearts/releases/tag/v1.2.1
 [1.2.0]: https://github.com/dbaggott/mc-truhearts/releases/tag/v1.2.0

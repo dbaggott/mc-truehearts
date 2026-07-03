@@ -411,38 +411,75 @@ public final class DamageLog {
 			return entity.getDisplayName().getString();
 		}
 		// Cases below are only for msgIds where we want a label that DIFFERS
-		// from capitalize(msgId) — a rename, a merge of aliases, or a fix
-		// for underscore/camelCase noise. Any msgId not listed here (and any
-		// new one Mojang adds) falls through to capitalize(msgId), which is
-		// the right default for simple single-word ids like "sting" or "hurt".
+		// from humanize(msgId) — a rename, or a merge of aliases. Any msgId
+		// not listed here (and any new one Mojang adds) falls through to
+		// humanize, which splits on underscores and camelCase boundaries and
+		// sentence-cases the result. So {@code witherSkull} → "Wither skull",
+		// {@code mace_smash} → "Mace smash", {@code badRespawnPoint} → "Bad
+		// respawn point" all render cleanly with no explicit case.
 		return switch (source.getMsgId()) {
 			case "inFire", "onFire" -> "Fire";
 			case "drown" -> "Drowning";
 			case "starve" -> "Starvation";
 			case "hotFloor" -> "Magma block";
+			case "sulfurCubeHot" -> "Magma sulfur cube";
 			case "cramming" -> "Entity cramming";
 			case "inWall" -> "Suffocation";
 			case "explosion", "explosion.player" -> "Explosion";
 			case "magic", "indirectMagic" -> "Magic";
 			case "lightningBolt" -> "Lightning";
 			case "freeze" -> "Freezing";
-			case "sonic_boom" -> "Sonic boom";
 			case "fallingBlock", "anvil", "fallingStalactite" -> "Falling block";
 			case "sweetBerryBush" -> "Berry bush";
 			case "flyIntoWall" -> "Kinetic energy";
-			case "dryOut" -> "Dry drowning";
+			case "dryout" -> "Dry drowning";
 			case "genericKill" -> "/kill";
 			case "outsideBorder" -> "Leaving the world's confines";
 			case "outOfWorld" -> "Void";
-			default -> capitalize(source.getMsgId());
+			default -> humanize(source.getMsgId());
 		};
 	}
 
-	private static String capitalize(String s) {
-		if (s.isEmpty()) {
-			return s;
+	/**
+	 * Turn a raw damage-type msgId into a sentence-cased human label:
+	 * split on {@code _} and camelCase boundaries, join with spaces, then
+	 * uppercase the first character and lowercase the rest.
+	 *
+	 * <p>Examples:
+	 * <ul>
+	 *   <li>{@code sting} → {@code "Sting"}
+	 *   <li>{@code witherSkull} → {@code "Wither skull"}
+	 *   <li>{@code mace_smash} → {@code "Mace smash"}
+	 *   <li>{@code badRespawnPoint} → {@code "Bad respawn point"}
+	 * </ul>
+	 */
+	private static String humanize(String msgId) {
+		if (msgId == null || msgId.isEmpty()) {
+			return msgId;
 		}
-		return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+		StringBuilder sb = new StringBuilder(msgId.length() + 4);
+		boolean firstChar = true;
+		for (int i = 0; i < msgId.length(); i++) {
+			char c = msgId.charAt(i);
+			if (c == '_') {
+				if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
+					sb.append(' ');
+				}
+				continue;
+			}
+			if (Character.isUpperCase(c)
+				&& sb.length() > 0
+				&& sb.charAt(sb.length() - 1) != ' ') {
+				sb.append(' ');
+			}
+			if (firstChar) {
+				sb.append(Character.toUpperCase(c));
+				firstChar = false;
+			} else {
+				sb.append(Character.toLowerCase(c));
+			}
+		}
+		return sb.toString();
 	}
 
 	private enum Type {
