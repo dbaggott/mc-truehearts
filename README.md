@@ -25,17 +25,29 @@ A small client-side Minecraft mod (Fabric) that surfaces the *real* numerical he
 
 | Tooling | Version |
 |---|---|
-| Minecraft (runtime) | 26.1, 26.1.1, 26.1.2, or 26.2 ("Chaos Cubed") — one jar for all |
-| Minecraft (build target) | 26.2 by default; the same source also compiles clean against 26.1.2 (verified in CI) |
+| Minecraft (runtime) | 26.1 through the whole 26.3 line — one jar for all |
+| Minecraft (build target) | 26.2 by default; CI rebuilds the same source against 26.1, 26.1.2, and a 26.3 snapshot |
 | Fabric Loader | 0.19.3 |
-| Fabric API | 0.153.0+26.2 at build time; players use whichever release matches their MC |
-| Fabric Loom | 1.17-SNAPSHOT |
+| Fabric API | 0.143.12 minimum; 0.156.0+26.2 at build time. Players use whichever release matches their MC |
+| Fabric Loom | 1.17.17 |
 | JDK | Temurin 25 (pinned via `mise.toml`) |
 | Gradle | 9.x via wrapper |
 
 The mod is client-only (`"environment": "client"` in `fabric.mod.json`) — no install on dedicated servers.
 
-Cross-version compat is possible because the mod uses only APIs that are shape-stable between 26.1 and 26.2, and renders the toggle toast through its own HUD element (see `ToggleToast`) rather than calling `setOverlayMessage` — that method's location differs between the two MC versions.
+Cross-version compat is possible because the mod uses only APIs that are shape-stable across these lines. Two places needed care: the toggle toast renders through the mod's own HUD element (see `ToggleToast`) rather than calling `setOverlayMessage`, whose location differs between 26.1 and 26.2; and `KeyBindings` takes its unbound-key sentinel from `InputConstants` rather than `org.lwjgl.glfw.GLFW`, which left the compile classpath in 26.3.
+
+### Minecraft version range
+
+`fabric.mod.json` declares `"minecraft": ">=26.1 <26.4-"`. The trailing `-` is Fabric's
+prerelease marker, and the loader normalizes MC snapshots into the semver prerelease
+slot (`26.3-snapshot-6` → `26.3-alpha.6`, `26.3-rc-1` → `26.3-rc.1`). One range
+therefore spans snapshot → pre → rc → release → patch for 26.3, and stops before
+`26.4-alpha.1` — so a jar built today keeps loading when 26.3 goes stable, with no
+metadata change and no re-release.
+
+The Modrinth release surface (`minecraftVersions` in `build.gradle`) is deliberately
+narrower: stable releases only. Add `"26.3"` there once it ships.
 
 ## Build
 

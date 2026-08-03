@@ -11,6 +11,38 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 > in reverse-chronological order for human browsing. When shipping a new release,
 > add the version's file in `.modrinth/changelogs/` *and* prepend a new section here.
 
+## [1.4.0] — 2026-08-03
+
+Minecraft 26.3 compatibility.
+
+- **Runs on the whole 26.3 line, snapshots included.** The declared range in
+  `fabric.mod.json` moves from `>=26.1 <26.3-` to `>=26.1 <26.4-`. Because the
+  loader normalizes MC snapshots into the semver prerelease slot
+  (`26.3-snapshot-6` → `26.3-alpha.6`), that single range spans snapshot →
+  pre → rc → release → patch. A jar built now keeps loading when 26.3 goes
+  stable — no metadata change, no re-release.
+- **Fixed a 26.3 build break.** `KeyBindings` took its unbound-key sentinel
+  from `org.lwjgl.glfw.GLFW`, which is no longer on the compile classpath in
+  26.3. It now uses `InputConstants.UNKNOWN.getValue()`, which resolves
+  identically on every supported line. Behavior is unchanged.
+- **Fabric API minimum is now declared** as `>=0.143.12` instead of `*`. An
+  under-versioned install gets a clear loader message rather than a
+  `NoSuchMethodError` at runtime. 0.143.12 is the first release carrying
+  `HudElement.extractRenderState(GuiGraphicsExtractor, DeltaTracker)`, which
+  every TruHearts overlay draws through — so the floor excludes only versions
+  that genuinely cannot run the mod, and CI builds that exact pairing.
+- **CI matrix widened** from two rows to four — 26.1 at the declared floor,
+  26.1.2, 26.2, and a non-blocking 26.3 snapshot row. The 26.1 row closes a
+  gap: that line was advertised as supported but never built. The 26.3 row is
+  early warning for snapshot breakage and is allowed to fail without blocking
+  a PR.
+- **Toolchain:** Fabric Loom pinned to the `1.17.17` release rather than the
+  moving `1.17-SNAPSHOT`; default Fabric API build target moved to
+  `0.156.0+26.2`.
+
+Listed Minecraft versions on Modrinth stay at 26.1–26.2 while 26.3 is in
+snapshot. Nothing in the HP readout, damage log, or toggles changed.
+
 ## [1.3.1] — 2026-07-03
 
 Damage-log label polish.
@@ -112,6 +144,7 @@ First stable release.
 Minecraft 26.2 with Fabric Loader 0.19.3+. Client-only — does nothing on a dedicated
 server and isn't required there.
 
+[1.4.0]: https://github.com/dbaggott/mc-truhearts/releases/tag/v1.4.0
 [1.3.1]: https://github.com/dbaggott/mc-truhearts/releases/tag/v1.3.1
 [1.3.0]: https://github.com/dbaggott/mc-truhearts/releases/tag/v1.3.0
 [1.2.1]: https://github.com/dbaggott/mc-truhearts/releases/tag/v1.2.1
