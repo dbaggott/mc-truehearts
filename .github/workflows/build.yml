@@ -7,22 +7,40 @@ on:
 
 jobs:
   build:
-    # Matrix build: the "publish" build is the 26.2 target from gradle.properties;
-    # the "compat" build swaps the MC version to the earliest supported line
-    # (26.1.2) to lock in the promise that a single jar covers both minor
-    # versions. If a future edit uses a 26.2-only API by accident, the compat
-    # job fails on PR before the release surface can advertise 26.1 support.
+    # One jar covers every MC line the mod claims. Each matrix row rebuilds the
+    # same source against a different (MC, Fabric API) pair so an accidental
+    # use of a version-specific API fails here rather than in a player's log.
+    #
+    # The 26.1 row is the *floor* row: it pairs the oldest supported MC with the
+    # newest Fabric API that line can reach (0.145.1 — the 26.1 line stops
+    # there), which is exactly the `fabric-api` minimum declared in
+    # fabric.mod.json. It is what makes that declared floor a tested claim
+    # rather than an assumed one.
+    #
+    # The 26.3 row is forward-compat only and non-blocking: it builds against a
+    # Mojang snapshot, so a breaking snapshot must not red-X unrelated PRs. Its
+    # value is early warning — DamageEventMixin targets
+    # LivingEntity.handleDamageEvent with `"required": true`, so a rename there
+    # is a hard crash on load, and this row surfaces it the week it happens.
     strategy:
       fail-fast: false
       matrix:
         include:
-          - name: mc26.2
-            mc: '26.2'
-            fabric_api: '0.153.0+26.2'
+          - name: mc26.1
+            mc: '26.1'
+            fabric_api: '0.145.1+26.1'
           - name: mc26.1.2
             mc: '26.1.2'
-            fabric_api: '0.153.0+26.1.2'
+            fabric_api: '0.155.2+26.1.2'
+          - name: mc26.2
+            mc: '26.2'
+            fabric_api: '0.156.0+26.2'
+          - name: mc26.3-snapshot
+            mc: '26.3-snapshot-6'
+            fabric_api: '0.156.1+26.3'
+            experimental: true
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental || false }}
     permissions:
       contents: read
     steps:
@@ -41,7 +59,7 @@ jobs:
             -Pfabric_api_version=${{ matrix.fabric_api }}
 
       # Upload the 26.2 (default-target) jar as the artifact used elsewhere.
-      # The 26.1.2 build is a compat gate; its jar isn't published.
+      # The other rows are compat gates; their jars aren't published.
       - if: matrix.name == 'mc26.2'
         uses: actions/upload-artifact@v7
         with:
