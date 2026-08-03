@@ -25,14 +25,17 @@ Minecraft 26.3 compatibility.
   from `org.lwjgl.glfw.GLFW`, which is no longer on the compile classpath in
   26.3. It now uses `InputConstants.UNKNOWN.getValue()`, which resolves
   identically on every supported line. Behavior is unchanged.
-- **Fabric API minimum is now declared** as `>=0.145.1` instead of `*`. An
+- **Fabric API minimum is now declared** as `>=0.143.12` instead of `*`. An
   under-versioned install gets a clear loader message rather than a
-  `NoSuchMethodError` at runtime. 0.145.1 is the newest release available to
-  the oldest supported line (26.1), and CI now builds that exact pairing.
-- **CI matrix widened** from two rows to four — 26.1, 26.1.2, 26.2, and a
-  non-blocking 26.3 snapshot row. The 26.1 row closes a gap: that line was
-  advertised as supported but never built. The 26.3 row is early warning for
-  snapshot breakage and is allowed to fail without blocking a PR.
+  `NoSuchMethodError` at runtime. 0.143.12 is the first release carrying
+  `HudElement.extractRenderState(GuiGraphicsExtractor, DeltaTracker)`, which
+  every TruHearts overlay draws through — so the floor excludes only versions
+  that genuinely cannot run the mod, and CI builds that exact pairing.
+- **CI matrix widened** from two rows to four — 26.1 at the declared floor,
+  26.1.2, 26.2, and a non-blocking 26.3 snapshot row. The 26.1 row closes a
+  gap: that line was advertised as supported but never built. The 26.3 row is
+  early warning for snapshot breakage and is allowed to fail without blocking
+  a PR.
 - **Toolchain:** Fabric Loom pinned to the `1.17.17` release rather than the
   moving `1.17-SNAPSHOT`; default Fabric API build target moved to
   `0.156.0+26.2`.
@@ -141,6 +144,7 @@ First stable release.
 Minecraft 26.2 with Fabric Loader 0.19.3+. Client-only — does nothing on a dedicated
 server and isn't required there.
 
+[1.4.0]: https://github.com/dbaggott/mc-truhearts/releases/tag/v1.4.0
 [1.3.1]: https://github.com/dbaggott/mc-truhearts/releases/tag/v1.3.1
 [1.3.0]: https://github.com/dbaggott/mc-truhearts/releases/tag/v1.3.0
 [1.2.1]: https://github.com/dbaggott/mc-truhearts/releases/tag/v1.2.1

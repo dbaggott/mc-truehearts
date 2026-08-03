@@ -28,7 +28,7 @@ A small client-side Minecraft mod (Fabric) that surfaces the *real* numerical he
 | Minecraft (runtime) | 26.1 through the whole 26.3 line — one jar for all |
 | Minecraft (build target) | 26.2 by default; CI rebuilds the same source against 26.1, 26.1.2, and a 26.3 snapshot |
 | Fabric Loader | 0.19.3 |
-| Fabric API | 0.145.1 minimum; 0.156.0+26.2 at build time. Players use whichever release matches their MC |
+| Fabric API | 0.143.12 minimum; 0.156.0+26.2 at build time. Players use whichever release matches their MC |
 | Fabric Loom | 1.17.17 |
 | JDK | Temurin 25 (pinned via `mise.toml`) |
 | Gradle | 9.x via wrapper |

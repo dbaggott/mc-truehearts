@@ -125,10 +125,9 @@ publishMods {
 		// jar runs on it unchanged, so that is a metadata edit, not a release.
 		//
 		// A single jar spans these lines because the mod sticks to APIs that
-		// are shape-stable across them — see the "Multi-MC-version" section of
-		// TruHeartsClient's javadoc for the one place that needed working
-		// around (the toggle toast, routed through our own HUD element rather
-		// than vanilla's setOverlayMessage).
+		// are shape-stable across them — see the "Multi-MC-version support"
+		// section of TruHeartsClient's class javadoc for the two places that
+		// needed working around.
 		minecraftVersions.add("26.1")
 		minecraftVersions.add("26.1.1")
 		minecraftVersions.add("26.1.2")

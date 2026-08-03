@@ -17,6 +17,27 @@ import net.minecraft.network.chat.Component;
  * <p>Feature classes (HUD overlay, damage tracker, …) live as siblings
  * under {@code client.hud} / sibling sub-packages — this file stays as a
  * small wiring hub so new features land as one-line additions here.
+ *
+ * <h2>Multi-MC-version support</h2>
+ *
+ * <p>A single jar covers MC 26.1 through the whole 26.3 line. That holds
+ * because the mod restricts itself to APIs whose shape is stable across
+ * those versions. Two places needed an explicit accommodation:
+ *
+ * <ul>
+ *   <li>{@link ToggleToast} renders the toggle message through the mod's
+ *       own HUD element rather than calling vanilla's
+ *       {@code setOverlayMessage}, which sits on {@code Gui} in 26.1 and
+ *       on {@code Gui.hud} in 26.2 — no single source form compiles
+ *       against both.</li>
+ *   <li>{@link KeyBindings} takes its unbound-key sentinel from
+ *       {@code InputConstants} rather than {@code org.lwjgl.glfw.GLFW},
+ *       which is not on the compile classpath from 26.3 onward.</li>
+ * </ul>
+ *
+ * <p>The supported range itself is declared in {@code fabric.mod.json};
+ * the README's "Minecraft version range" section explains how one range
+ * spans snapshots, release candidates, and the final release.
  */
 public class TruHeartsClient implements ClientModInitializer {
 	@Override
@@ -36,12 +57,9 @@ public class TruHeartsClient implements ClientModInitializer {
 	 * <p>{@code consumeClick()} can return true more than once per tick
 	 * under lag, hence the drain loop per keybind.
 	 *
-	 * <p>We render our own toasts via {@link ToggleToast} rather than
-	 * calling vanilla's {@code setOverlayMessage} because that method's
-	 * location differs between MC 26.1 ({@code Gui.setOverlayMessage})
-	 * and 26.2 ({@code Gui.hud.setOverlayMessage}) — routing through
-	 * {@link ToggleToast} keeps this code path source-compatible with
-	 * both MC lines from a single jar.
+	 * <p>Toggle confirmations go through {@link ToggleToast} rather than
+	 * vanilla's {@code setOverlayMessage} — see the "Multi-MC-version
+	 * support" section of this class's javadoc for why.
 	 */
 	private static void onClientTickEnd(Minecraft client) {
 		while (KeyBindings.TOGGLE.consumeClick()) {

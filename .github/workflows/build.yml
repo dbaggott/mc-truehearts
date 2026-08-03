@@ -11,11 +11,12 @@ jobs:
     # same source against a different (MC, Fabric API) pair so an accidental
     # use of a version-specific API fails here rather than in a player's log.
     #
-    # The 26.1 row is the *floor* row: it pairs the oldest supported MC with the
-    # newest Fabric API that line can reach (0.145.1 — the 26.1 line stops
-    # there), which is exactly the `fabric-api` minimum declared in
-    # fabric.mod.json. It is what makes that declared floor a tested claim
-    # rather than an assumed one.
+    # The 26.1 row is the *floor* row: oldest supported MC paired with the exact
+    # `fabric-api` minimum declared in fabric.mod.json. 0.143.12 is where
+    # HudElement.extractRenderState(GuiGraphicsExtractor, DeltaTracker) first
+    # appears — 0.143.11 does not have it — so it is the oldest Fabric API that
+    # can actually run this mod. Building it here is what makes the declared
+    # floor a tested claim rather than an assumed one.
     #
     # The 26.3 row is forward-compat only and non-blocking: it builds against a
     # Mojang snapshot, so a breaking snapshot must not red-X unrelated PRs. Its
@@ -26,9 +27,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: mc26.1
+          - name: mc26.1-floor
             mc: '26.1'
-            fabric_api: '0.145.1+26.1'
+            fabric_api: '0.143.12+26.1'
           - name: mc26.1.2
             mc: '26.1.2'
             fabric_api: '0.155.2+26.1.2'
