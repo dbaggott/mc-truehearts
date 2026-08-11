@@ -3,7 +3,7 @@
 [![Modrinth downloads](https://img.shields.io/modrinth/dt/dnbg-truhearts?label=downloads&logo=modrinth&color=00AF5C)](https://modrinth.com/mod/dnbg-truhearts)
 [![Modrinth game versions](https://img.shields.io/modrinth/game-versions/dnbg-truhearts?logo=modrinth&color=00AF5C&label=for%20MC)](https://modrinth.com/mod/dnbg-truhearts)
 [![Latest release](https://img.shields.io/github/v/release/dbaggott/mc-truhearts?logo=github&label=release)](https://github.com/dbaggott/mc-truhearts/releases/latest)
-[![Build](https://img.shields.io/github/actions/workflow/status/dbaggott/mc-truhearts/build.yml?branch=main&logo=github&label=build)](https://github.com/dbaggott/mc-truhearts/actions/workflows/build.yml)
+[![Build](https://img.shields.io/github/actions/workflow/status/dbaggott/mc-truhearts/ci.yml?branch=main&logo=github&label=build)](https://github.com/dbaggott/mc-truhearts/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/dbaggott/mc-truhearts)](LICENSE)
 
 A small client-side Minecraft mod (Fabric) that surfaces the *real* numerical health and damage values the game uses internally — no rounding to half-hearts.
@@ -80,7 +80,7 @@ src/main/resources/fabric.mod.json                   — mod metadata
 src/main/resources/truhearts.mixins.json          — shared mixin config
 src/client/                                          — client-only code (HUD lives here)
 src/client/resources/truhearts.client.mixins.json — client mixin config
-.github/workflows/build.yml                          — CI: gradle build on push/PR
+.github/workflows/ci.yml                          — CI: gradle build on push/PR
 ```
 
 Two source sets ("split environment") are used so client-only APIs can't be referenced from shared code — Loom enforces this at compile time.
