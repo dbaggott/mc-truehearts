@@ -4,9 +4,12 @@ on:
   push:
     branches: [main]
   pull_request:
+    # `ready_for_review` runs CI when a draft is marked ready; the job below skips while it is one.
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
   build:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     # One jar covers every MC line the mod claims. Each matrix row rebuilds the
     # same source against a different (MC, Fabric API) pair so an accidental
     # use of a version-specific API fails here rather than in a player's log.
@@ -67,3 +70,26 @@ jobs:
           name: truhearts-jar
           path: build/libs/*.jar
           if-no-files-found: error
+
+  # The single context branch protection requires. Which jobs gate a merge is then this
+  # file's business rather than a Terraform change — `needs:` is the list.
+  #
+  # ⚠️ `if: always()` is load-bearing: without it this job is SKIPPED when a dependency
+  # fails, and a skipped check reports SUCCESS to branch protection.
+  ci-required:
+    if: always()
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify every required job succeeded
+        env:
+          RESULTS: ${{ join(needs.*.result, ',') }}
+        run: |
+          set -euo pipefail
+          echo "needs.*.result = $RESULTS"
+          for r in ${RESULTS//,/ }; do
+            case "$r" in
+              success|skipped) ;;
+              *) echo "::error::dependency reported '$r'"; exit 1 ;;
+            esac
+          done
